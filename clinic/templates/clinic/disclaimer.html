@@ -4,7 +4,7 @@
 {% block head %}
 <script src="//media.twiliocdn.com/sdk/js/video/releases/2.0.0/twilio-video.min.js"></script>
 <script src="{% static 'js/video.js' %}"></script>
-<script src="{% static 'js/webrtc.js' %}"></script>
+<script src="{% static 'js/features-support.js' %}"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     if (!isWebRTCSupported()) {
