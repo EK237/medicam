@@ -4,6 +4,14 @@
 {% block head %}
 <script src="//media.twiliocdn.com/sdk/js/video/releases/2.0.0/twilio-video.min.js"></script>
 <script src="{% static 'js/video.js' %}"></script>
+<script src="{% static 'js/features-support.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    if (!isWebRTCSupported()) {
+      document.getElementById('notify-warning-webrtc').style.display = 'block';
+    };
+  });
+</script>
 {% endblock %}
 
 {% block content %}
@@ -12,28 +20,46 @@
   <div class="row top">
     {% include 'clinic/site_name.html' %}
     {% if disclaimer %}
-      {{ disclaimer.html|safe }}
+    {{ disclaimer.html|safe }}
     {% else %}
-      <p>{% trans "Please read and acknowledge the following" %}:</p>
-      <ul>
-        <li>{% trans "This service is provided in good faith as a last resort for those who are otherwise unable to obtain help and advice during this unprecedented public health emergency." %}</li>
-        <li>{% trans "We are not a provider of healthcare services. Our volunteers do not provide individual medical advice or diagnosis; they are here to answer questions about the Coronavirus, using information from official sources." %}</li>
-        <li>{% trans "Volunteers are minimally verified and may not be licensed practitioners in your jurisdiction. Any advice you receive is taken at your own risk." %}</li>
-        <li>{% trans "Volunteers may take anonymized notes about the presenting complaint, symptoms, and management plan. These notes will be stored according to best practices. Information will not be shared unless required by law." %}</li>
-        <li>{% trans "Your name or other personally identifying information will not be stored. Your IP address will be stored to help protect our systems." %}</li>
-        <li>{% trans "By continuing, you confirm that you agree to our" %} <a href="{% url 'privacy' %}">{% trans "Privacy Policy" %}</a> {% trans "and" %} <a href="{% url 'terms' %}">{% trans "Terms of Use" %}</a>.</li>
-        <li><b>{% trans "If you have a medical emergency, call your local emergency services or go to a hospital." %}</b></li>
-      </ul>
+    <p>{% trans "Please read and acknowledge the following" %}:</p>
+    <ul>
+      <li>
+        {% trans "This service is provided in good faith as a last resort for those who are otherwise unable to obtain help and advice during this unprecedented public health emergency." %}
+      </li>
+      <li>
+        {% trans "We are not a provider of healthcare services. Our volunteers do not provide individual medical advice or diagnosis; they are here to answer questions about the Coronavirus, using information from official sources." %}
+      </li>
+      <li>
+        {% trans "Volunteers are minimally verified and may not be licensed practitioners in your jurisdiction. Any advice you receive is taken at your own risk." %}
+      </li>
+      <li>
+        {% trans "Volunteers may take anonymized notes about the presenting complaint, symptoms, and management plan. These notes will be stored according to best practices. Information will not be shared unless required by law." %}
+      </li>
+      <li>
+        {% trans "Your name or other personally identifying information will not be stored. Your IP address will be stored to help protect our systems." %}
+      </li>
+      <li>{% trans "By continuing, you confirm that you agree to our" %} <a
+          href="{% url 'privacy' %}">{% trans "Privacy Policy" %}</a> {% trans "and" %} <a
+          href="{% url 'terms' %}">{% trans "Terms of Use" %}</a>.</li>
+      <li><b>{% trans "If you have a medical emergency, call your local emergency services or go to a hospital." %}</b>
+      </li>
+    </ul>
     {% endif %}
     <form action="{% url 'disclaimer' %}" method="post">
       {% csrf_token %}
       <label for="enable-video">
-        <input type="checkbox" id="enable-video" name="video" value="1" checked onchange="document.getElementById('cam-preview').style.display = this.checked ? 'block' : 'none'">
+        <input type="checkbox" id="enable-video" name="video" value="1" checked
+          onchange="document.getElementById('cam-preview').style.display = this.checked ? 'block' : 'none'">
         <span class="label-body">{% trans "Enable my camera" %}</span>
       </label>
       <div id="cam-preview">
-        <input id="test-cam" class="button" type="button" value="{% trans "Test camera" %}" onclick="this.style.display='none'; showPreview()">
+        <input id="test-cam" class="button" type="button" value="{% trans "Test camera" %}"
+          onclick="this.style.display='none'; showPreview()">
         <div id="local-media" class="preview"></div>
+      </div>
+      <div id="notify-warning-webrtc" style="display: none">
+        <b> &#x26A0;&#xFE0F; {% trans "We've detected that your browser may not support video chat, but you can still text chat with a volunteer." %}</b>
       </div>
       <input class="button-primary" type="submit" value="{% trans "I agree" %}">
     </form>
